@@ -47,7 +47,9 @@ class PurchaseJsonBuilderService < ApplicationService
         order['order_id']==current_order_id
       end.first
 
-      current_order['total'] += purchase.product_value
+      current_order['total'] = (
+        current_order['total'] + purchase.product_value
+      ).round(2)
     end
 
     json_response << current_user_data
