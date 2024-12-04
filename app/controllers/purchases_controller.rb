@@ -1,40 +1,49 @@
 class PurchasesController < ApplicationController
+  before_action :set_legacy_purchases_array, :validate_payload
+
   def create
-    return head :bad_request unless request.body.size > 0
-
     purchases = []
+    @legacy_purchases.each do |legacy_purchase|
+      logger.debug("processing legacy purchase: #{legacy_purchase}")
 
-    lines = request.body.string.split("\n")
-    lines.each do |line|
-      logger.debug("line: #{line}")
+      purchase = Purchase.new(legacy_purchase)
 
-      purchase = Purchase.new(line)
-
-      if purchase.present? && purchase.valid?
+      if purchase.valid?
         purchases << purchase
       else
         return head :unprocessable_entity
       end
     end
 
-    head :ok
+    render json: PurchaseJsonBuilderService.call(purchases)
   end
-
-  # TODO: validar se os campos são o esperado
 
   private
 
-  def transform_data(line)
-    return nil unless line.size == 95
+  def set_legacy_purchases_array
+    @legacy_purchases = if request.body.class == File
+      request.raw_post.split("\n")
+    else
+     request.body.string.split("\n")
+    end
+  end
 
-    hash_data = Hash.new
-    hash_data['client_id'] = line[0,10]&.to_i
-    hash_data['client_name'] = line[11,44]&.strip
-    hash_data['order_id'] = line[55,10]&.to_i
-    hash_data['product_id'] = line[65,10]&.to_i
-    hash_data['product_value'] = line[75,12]&.to_f
-    hash_data['purchase_date'] = line[87,8]&.to_date
-
-    hash_data
+  def validate_payload
+    if request.body.size.zero?
+      head :bad_request
+      false
+    else
+      @legacy_purchases.each do |legacy_purchase|
+        unless legacy_purchase[0.10] !~ /\D/ &&
+               legacy_purchase[11,44].match?(/\A[a-zA-Z' .]*\z/) &&
+               legacy_purchase[55,10] !~ /\D/ &&
+               legacy_purchase[65,10] !~ /\D/ &&
+               legacy_purchase[75,12].strip.tr('.', '')  !~ /\D/ &&
+               legacy_purchase[87,8] !~ /\D/
+          head :unprocessable_entity
+          false
+        end
+      end
+    end
   end
 end
