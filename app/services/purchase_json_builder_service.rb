@@ -53,6 +53,5 @@ class PurchaseJsonBuilderService < ApplicationService
     end
 
     json_response << current_user_data
-    json_response
   end
 end
