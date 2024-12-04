@@ -34,12 +34,12 @@ class PurchasesController < ApplicationController
       false
     else
       @legacy_purchases.each do |legacy_purchase|
-        unless legacy_purchase[0.10] !~ /\D/ &&
-          legacy_purchase[11,44].match?(/\A[a-zA-Z' .]*\z/) &&
-          legacy_purchase[55,10] !~ /\D/ &&
-          legacy_purchase[65,10] !~ /\D/ &&
-          legacy_purchase[75,12].strip.tr(".", '')  !~ /\D/ &&
-          legacy_purchase[87,8] !~ /\D/
+        unless legacy_purchase[0, 10] !~ /\D/ &&
+               legacy_purchase[11, 44].match?(/\A[a-zA-Z' .]*\z/) &&
+               legacy_purchase[55, 10] !~ /\D/ &&
+               legacy_purchase[65, 10] !~ /\D/ &&
+               legacy_purchase[75, 12].strip.tr(".", '')  !~ /\D/ &&
+               legacy_purchase[87,8] !~ /\D/
           head :unprocessable_entity
           false
         end
