@@ -6,12 +6,12 @@ class Purchase < ApplicationRecord
 
   def initialize(line)
     if line.present?
-      set_client_id(line[0,10])
-      set_client_name(line[11,44])
-      set_order_id(line[55,10])
-      set_product_id(line[65,10])
-      set_product_value(line[75,12])
-      set_purchase_date(line[87,8])
+      set_client_id(line[0, 10])
+      set_client_name(line[11, 44])
+      set_order_id(line[55, 10])
+      set_product_id(line[65, 10])
+      set_product_value(line[75, 12])
+      set_purchase_date(line[87, 8])
     end
 
     super()
@@ -25,7 +25,7 @@ class Purchase < ApplicationRecord
   end
 
   def set_client_name(value)
-    @client_name = value[11,44]&.strip
+    @client_name = value[11, 44]&.strip
   end
   def client_name
     @client_name
