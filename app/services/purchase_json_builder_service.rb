@@ -1,7 +1,7 @@
 class PurchaseJsonBuilderService < ApplicationService
   def initialize(purchases)
     @purchases = purchases.sort_by do |purchase|
-      [purchase.client_id, purchase.order_id]
+      [ purchase.client_id, purchase.order_id ]
     end
 
     super()

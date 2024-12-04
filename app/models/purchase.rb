@@ -56,7 +56,7 @@ class Purchase < ApplicationRecord
     begin
       @purchase_date = value&.to_date
     rescue
-      errors.add(:purchase_date, 'invalid date')
+      errors.add(:purchase_date, "invalid date")
     end
   end
   def purchase_date
