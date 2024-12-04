@@ -21,7 +21,7 @@ class PurchaseTest < ActiveSupport::TestCase
   test "should be invalid when invalid date" do
     invalid_date_line = "0000000023                                  Logan Lynch"\
                         "00000002530000000002      322.1220210593"
-    assert !Purchase.new(invalid_date_line).valid?
+    assert_not Purchase.new(invalid_date_line).valid?
   end
 
   # test "should be invalid when string sent instead of integer" do
