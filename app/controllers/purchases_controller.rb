@@ -1,11 +1,16 @@
 class PurchasesController < ApplicationController
   def create
+    return head :bad_request unless request.body.size > 0
+
     purchases = []
-    request.body.each_line do |line|
+
+    lines = request.body.string.split("\n")
+    lines.each do |line|
       logger.debug("line: #{line}")
 
-      purchase = Purchase.new(transform_data(line.strip))
-      if purchase.valid?
+      purchase = Purchase.new(line)
+
+      if purchase.present? && purchase.valid?
         purchases << purchase
       else
         return head :unprocessable_entity
@@ -14,6 +19,8 @@ class PurchasesController < ApplicationController
 
     head :ok
   end
+
+  # TODO: validar se os campos são o esperado
 
   private
 
